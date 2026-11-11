@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BOT-X · Escape Room Robotik</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8eef6;--panel:rgba(255,255,255,.88);--ink:#39414f;--mut:#76829a;--line:#ccd6e3;--cy:#2a93dd;--am:#d97a0e;--ok:#2a9d63;--bad:#d4473f;--btn:#f8fafd;--btn2:#dde6f0;--btnink:#39414f;--pri:#ffbd5a;--pri2:#f59a23;--priink:#3b2600;--sh:rgba(52,84,128,.18);--bg1:#f3f7fc;--bg2:#d9e5f2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1322;--panel:rgba(16,30,54,.82);--ink:#e6f0ff;--mut:#8fa7c9;--line:#33507c;--cy:#62ccff;--am:#ffb84d;--ok:#5fe3a1;--bad:#ff7b72;--btn:#1b3157;--btn2:#14264a;--btnink:#e6f0ff;--sh:rgba(0,0,0,.4);--bg1:#0d1b33;--bg2:#050a15}}
+:root[data-theme="dark"]{--bg:#0a1322;--panel:rgba(16,30,54,.82);--ink:#e6f0ff;--mut:#8fa7c9;--line:#33507c;--cy:#62ccff;--am:#ffb84d;--ok:#5fe3a1;--bad:#ff7b72;--btn:#1b3157;--btn2:#14264a;--btnink:#e6f0ff;--sh:rgba(0,0,0,.4);--bg1:#0d1b33;--bg2:#050a15}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;color:var(--ink);background:var(--bg) radial-gradient(ellipse at 50% -10%,var(--bg1),transparent 60%),linear-gradient(180deg,var(--bg1),var(--bg2));background-attachment:fixed;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:18px 14px 48px}
+h1,h2,h3,.hd{font-family:Rajdhani,system-ui,sans-serif;letter-spacing:.05em;margin:0 0 8px;line-height:1.15;font-weight:700}
+h1{font-size:2.1rem;text-transform:uppercase}h2{font-size:1.4rem}h3{font-size:1.15rem}
+.mono{font-family:"Share Tech Mono",ui-monospace,Menlo,monospace}
+p{margin:0 0 10px}.mut{color:var(--mut);font-size:.9rem}
+.panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 8px 26px var(--sh),inset 0 1px 0 rgba(255,255,255,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:rise .35s ease both}
+.panel:before{content:"";position:absolute;left:18px;right:18px;top:-1px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--cy),transparent)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+@media(prefers-reduced-motion:reduce){.panel{animation:none}.hpb i{transition:none}}
+label{display:block;font-weight:600;margin:10px 0 5px;font-size:.92rem}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--btn);border:1px solid var(--line);border-radius:12px;padding:9px 12px;box-shadow:inset 0 1px 3px var(--sh)}
+textarea{min-height:90px}
+:is(input,select,textarea,button,a):focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.btn{display:block;width:100%;font:700 1.05rem Rajdhani,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--priink);background:linear-gradient(180deg,var(--pri),var(--pri2));border:1px solid var(--pri2);border-radius:999px;padding:10px 16px;margin-top:12px;cursor:pointer;text-align:center;text-decoration:none;box-shadow:0 3px 10px var(--sh),inset 0 1px 0 rgba(255,255,255,.55);transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.sec{background:linear-gradient(180deg,var(--btn),var(--btn2));color:var(--btnink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.chip{display:inline-block;font:700 .85rem Rajdhani,system-ui,sans-serif;letter-spacing:.05em;border:1px solid var(--cy);color:var(--cy);border-radius:999px;padding:2px 13px;margin:0 6px 6px 0;background:var(--btn);cursor:pointer}
+.chip.on{background:linear-gradient(180deg,var(--pri),var(--pri2));color:var(--priink);border-color:var(--pri2)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.st{font:700 .78rem Rajdhani,sans-serif;letter-spacing:.06em;padding:1px 10px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+.st.ok{border-color:var(--ok);color:var(--ok)}.st.go{border-color:var(--cy);color:var(--cy)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.am{color:var(--am)}
+.rd{font-family:"Share Tech Mono",monospace;background:var(--btn);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-top:8px;font-size:.88rem;white-space:pre-wrap;min-height:2.4em;box-shadow:inset 0 1px 3px var(--sh)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:430px){.g2 select{font-size:.82rem;padding:8px}}
+.opt{display:flex;gap:8px;align-items:flex-start;padding:8px 12px;border:1px solid var(--line);border-radius:12px;margin-top:6px;cursor:pointer;background:var(--btn)}
+.opt input{width:auto;margin-top:5px;box-shadow:none}
+.hint{border-left:3px solid var(--am);border-radius:0 12px 12px 0;padding:6px 12px;margin-top:8px;background:var(--btn);font-size:.92rem}
+svg{width:100%;height:auto;display:block}
+.ic{fill:var(--btn2);stroke:var(--mut);stroke-width:1.5}.ia{fill:var(--cy)}.iw{fill:none;stroke:var(--mut);stroke-width:1.5}.ie{fill:var(--am)}
+.wr2{fill:none;stroke:var(--mut);stroke-width:2;stroke-linejoin:round}.wr2.fx{stroke:var(--ok);stroke-width:3.5}.pt{fill:var(--cy);fill-opacity:.12;stroke:var(--cy);stroke-dasharray:3 2;cursor:pointer}.pt.on{fill-opacity:.4}.mm{font:700 14px 'Share Tech Mono',monospace;fill:var(--ink)}.pr{fill:none;stroke-width:2.5}.pr.r{stroke:var(--bad)}.pr.k{stroke:var(--ink)}.bl{fill:var(--mut);font:9px 'Share Tech Mono',monospace}
+.sb{fill:none;stroke:var(--line);stroke-width:1.5}.sd{fill:var(--cy)}.sl{fill:var(--mut);font:10px "Share Tech Mono",monospace}.wr{stroke:var(--cy);stroke-width:2;fill:none}
+.lamp{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--line);margin:0 4px -1px}.lamp.on{background:var(--am);box-shadow:0 0 8px var(--am)}
+.core{width:84px;flex:none}
+summary{cursor:pointer;font:700 1.15rem Rajdhani,system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase}details ol{margin:10px 0 0;padding-left:20px}details li{margin-bottom:6px}
+.hp{display:flex;align-items:center;gap:10px;margin:4px 0 12px}.hp b{font-family:Rajdhani,sans-serif;letter-spacing:.06em}
+.hpb{flex:1;height:14px;border-radius:999px;background:var(--btn2);border:1px solid var(--line);overflow:hidden;box-shadow:inset 0 1px 3px var(--sh)}
+.hpb i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#8be8b0,var(--ok));transition:width .6s}
+table{border-collapse:collapse;width:100%;font-size:.9rem}td{border-bottom:1px solid var(--line);padding:5px 4px}td:last-child{text-align:right}
+.seg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:8px 0}.sg{border:1px solid var(--line);border-radius:12px;padding:4px 2px;text-align:center;font-size:.75rem;color:var(--mut);background:var(--btn)}.sg.on{border-color:var(--ok);color:var(--ok)}.sg b{display:block;font-family:Rajdhani,sans-serif}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var D={1:{n:'Gerbang Rakit',b:'Mekanik',r:'Perakit'},2:{n:'Kode Pintu',b:'Pemrograman',r:'Programmer'},3:{n:'Sirkuit Sensor',b:'Elektronika',r:'Perangkai rangkaian'},4:{n:'Robot Rusak',b:'Troubleshooting',r:'Penguji'},5:{n:'Evakuasi',b:'Final: integrasi',r:'Penguji'}};
+var CODE={1:'RAKIT',2:'KODE',3:'SIRKUIT',4:'DIAGNOSA',5:'EVAKUASI'};
+var VER=[{k:'D',n:'Dasar',p:20},{k:'L',n:'Lanjutan',p:25},{k:'T',n:'Tantangan',p:30}];
+var M={},app=document.getElementById('app'),S={tim:'',mem:[],res:{}};
+try{var sv=localStorage.getItem('botx-state');if(sv)S=JSON.parse(sv)}catch(e){}
+function save(){try{localStorage.setItem('botx-state',JSON.stringify(S))}catch(e){}}
+function mmss(ms){ms=Math.max(0,ms);var q=Math.floor(ms/1000);return String(Math.floor(q/60)).padStart(2,'0')+':'+String(q%60).padStart(2,'0')}
+function kd(id,t){var q=(t!=null?t:(S.tim||'')).toLowerCase()+id,x=0;for(var i=0;i<q.length;i++)x=(x*31+q.charCodeAt(i))%9973;return CODE[id]+'-'+(10+x%90)}
+function DUR(){return(S.dur||30)*60000}
+function h(t,a){var e=document.createElement(t);a=a||{};for(var k in a){if(k==='class')e.className=a[k];else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),a[k]);else e.setAttribute(k,a[k])}
+ for(var i=2;i<arguments.length;i++)[].concat(arguments[i]).forEach(function(x){if(x!=null)e.append(x)});return e}
+function show(){var a=[];[].slice.call(arguments).forEach(function(x){a=a.concat(x)});app.replaceChildren.apply(app,a.filter(function(x){return x!=null&&x!==false}));window.scrollTo(0,0)}
+function sel(opts,val){var s=h('select',{},opts.map(function(o){return h('option',{value:o[0]},o[1])}));if(val!=null)s.value=val;return s}
+function copy(str,b){var l=b.dataset.l,d=function(m){b.textContent=m;setTimeout(function(){b.textContent=l},1800)};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(str).then(function(){d('Tersalin')},function(){d('Gagal menyalin')});else d('Gagal menyalin')}
+function total(){var t=0;for(var i in S.res)t+=S.res[i].pts;return t}
+function nDone(){return Object.keys(S.res).length}
+function kode(){return['TIM',S.tim.replace(/\|/g,' '),total(),[1,2,3,4,5].map(function(i){var r=S.res[i];return r?r.v+'-'+r.pts+'-'+r.hints:'0'}).join(',')].join('|')}
+function ring(n){var c=2*Math.PI*34,o=c*(1-n/5);return h('div',{class:'core',innerHTML:''},(function(){var d=document.createElement('div');d.innerHTML='<svg viewBox="0 0 84 84" role="img" aria-label="Pemulihan BOT-X '+n+' dari 5"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--line)" stroke-width="7"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--cy)" stroke-width="7" stroke-dasharray="'+c+'" stroke-dashoffset="'+o+'" transform="rotate(-90 42 42)"/><text x="42" y="47" text-anchor="middle" class="mono" font-size="16" fill="var(--ink)">'+n+'/5</text></svg>';return d.firstChild})())}
+
+
+// ===== PAPAN SKOR (live + manual) =====
+var LIVE={db:null,uid:null,rows:{},st:'cek',w:''},onBoard=null;
+function initLive(){
+ if(!window.claude||!claude.use){LIVE.st='off';return}
+ Promise.all([claude.use('db'),claude.use('user')]).then(function(r){
+  var db=r[0],u=r[1];if(!db){LIVE.st='off';if(onBoard)onBoard();return}
+  LIVE.db=db;
+  var idp=(u&&u.id)?u.id().catch(function(){return null}):Promise.resolve(null);
+  idp.then(function(id){LIVE.uid=id;push();
+   db.collection('papan').onSnapshot(function(sn){LIVE.rows={};sn.docs.forEach(function(d){var x=d.data();if(x&&x.tim)LIVE.rows[d.id]=x});LIVE.st='live';if(onBoard)onBoard()},function(){LIVE.st='err';if(onBoard)onBoard()})})
+ }).catch(function(){LIVE.st='off';if(onBoard)onBoard()})}
+function push(){if(!LIVE.db||!LIVE.uid||!S.tim)return;var res={};for(var i in S.res)res[i]={v:S.res[i].v,pts:S.res[i].pts,hints:S.res[i].hints};
+ LIVE.db.doc('papan/'+LIVE.uid).set({tim:S.tim,total:total(),res:res,t:Date.now()}).then(function(){LIVE.w='ok'},function(){LIVE.w='no'})}
+function man(){try{return JSON.parse(localStorage.getItem('botx-manual')||'{}')}catch(e){return{}}}
+function saveMan(o){try{localStorage.setItem('botx-manual',JSON.stringify(o))}catch(e){}}
+function rows(){var m={},add=function(x,src){var k=String(x.tim).toLowerCase();if(!m[k]||(x.t||0)>=(m[k].t||0))m[k]={tim:x.tim,total:x.total||0,res:x.res||{},t:x.t||0,src:src}};
+ for(var k in LIVE.rows)add(LIVE.rows[k],'live');var mm=man();for(var j in mm)add(mm[j],'manual');
+ if(S.tim&&!m[S.tim.toLowerCase()])add({tim:S.tim,total:total(),res:S.res,t:0},'perangkat ini');
+ return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return b.total-a.total||a.tim.localeCompare(b.tim)})}
+function imp(txt){var o=man(),ok=0,bad=0;txt.split(/\r?\n/).forEach(function(l){l=l.trim();if(!l)return;var m=l.match(/TIM\|([^|]+)\|(\d+)\|([0-9A-Za-z,\-]+)/);if(!m){bad++;return}
+ var ps=m[3].split(','),res={},tot=0,good=ps.length===5;
+ ps.forEach(function(p,i){if(p==='0')return;var q=p.match(/^([DLT]+)-(\d+)-(\d+)$/);if(!q){good=false;return}res[i+1]={v:q[1],pts:+q[2],hints:+q[3]};tot+=+q[2]});
+ if(!good){bad++;return}o[m[1].trim().toLowerCase()]={tim:m[1].trim(),total:tot,res:res,t:Date.now()};ok++});
+ saveMan(o);return[ok,bad]}
+function board(){
+ var wrap=h('div',{}),st=h('p',{role:'status'}),msg=h('p',{role:'status'}),ta=h('textarea',{placeholder:'Tempel kode hasil tim: TIM|Nama|total|... (boleh langsung dari WhatsApp, satu baris satu tim)'});
+ function draw(){
+  st.textContent=LIVE.st==='live'?'● Live: tersambung, skor tim bergerak otomatis.':LIVE.st==='cek'?'Menyambung ke data live…':'Live tidak tersedia di perangkat ini. Isi skor dari kode hasil tim di kolom bawah.';
+  st.className=LIVE.st==='live'?'ok':'mut';
+  var r=rows();
+  wrap.replaceChildren.apply(wrap,r.length?r.map(function(x,i){var n=Object.keys(x.res).length;
+   return h('div',{class:'panel'},h('div',{class:'row'},h('h3',{},(i+1)+'. '+x.tim),h('span',{class:'mono hd'},x.total+' poin')),
+    h('div',{class:'seg'},[1,2,3,4,5].map(function(m){var q=x.res[m];return h('div',{class:'sg'+(q?' on':''),title:'Misi '+m},h('b',{},'M'+m),h('span',{},q?q.v+' · '+q.pts:'—'))})),
+    h('p',{class:'mut'},'Misi selesai '+n+' dari 5 · sumber: '+x.src))}):[h('p',{class:'mut'},'Belum ada tim di papan.')])}
+ var ck={nm:h('input',{placeholder:'Nama tim'}),ms:sel([[1,'Misi 1'],[2,'Misi 2'],[3,'Misi 3'],[4,'Misi 4'],[5,'Misi 5']],1),out:h('div',{class:'rd'},'—')};
+ function ckf(){var t=ck.nm.value.trim();ck.out.textContent=t?'Kode '+ck.ms.options[ck.ms.selectedIndex].text+' untuk "'+t+'": '+kd(+ck.ms.value,t):'—'}
+ ck.nm.addEventListener('input',ckf);ck.ms.addEventListener('change',ckf);
+ onBoard=draw;draw();
+ show(h('p',{class:'mono am'},'// PAPAN SKOR KELAS'),h('h1',{},'Papan Skor'),st,wrap,
+  h('div',{class:'panel'},h('h3',{},'Tambah skor dari kode hasil'),h('p',{class:'mut'},'Dipakai Penjaga Gerbang bila live tidak tersedia. Kode tim yang sama akan diperbarui.'),ta,
+   h('button',{class:'btn',onclick:function(){var r=imp(ta.value);msg.className=r[1]?'bad':'ok';msg.textContent=r[0]+' tim ditambahkan'+(r[1]?', '+r[1]+' baris tidak terbaca':'')+'.';if(r[0])ta.value='';draw()}},'Tambahkan ke papan'),
+   h('button',{class:'btn sec',onclick:function(){saveMan({});msg.className='mut';msg.textContent='Data manual dihapus.';draw()}},'Hapus data manual'),msg),
+  h('div',{class:'panel'},h('h3',{},'Cek kode kunci tim'),h('p',{class:'mut'},'Untuk Penjaga Gerbang: kode kunci tiap tim berbeda. Isi nama tim persis seperti yang mereka tulis.'),ck.nm,ck.ms,ck.out),
+  h('button',{class:'btn sec',onclick:function(){onBoard=null;(S.tim&&S.mem.length)?hub():intro()}},'Kembali'))}
+
+function nextM(){for(var i=1;i<=5;i++)if(M[i]&&!S.res[i]){pick(i);return}hub()}
+function intro(){
+ var nm=h('input',{placeholder:'Contoh: Tim BOT-A',value:S.tim,autocomplete:'off'}),mm=h('textarea',{placeholder:'Satu nama per baris (4–5 orang)'}),er=h('p',{class:'bad',role:'alert'});
+ mm.value=S.mem.join('\n');
+ show(h('p',{class:'mono am'},'// SISTEM DARURAT'),h('h1',{},'BOT-X Terkunci'),
+ h('div',{class:'panel'},
+  h('p',{},'Lab robotik terkunci. Sistem BOT-X kehilangan 5 kode pemulihan. Timmu adalah teknisi: selesaikan lima misi, kumpulkan kode, lalu buka peti BOT-X.'),
+  h('p',{class:'mut'},'Pilih versi misi sesuai kekuatan timmu. Tiap misi berbatas '+(S.dur||30)+' menit. Kartu petunjuk boleh dipakai, tetapi mengurangi poin. Kamu melawan tantangan, bukan teman sekelas.')),
+ h('details',{class:'panel',open:''},h('summary',{},'Cara bermain'),h('ol',{},['Satu perangkat untuk satu tim. Isi nama tim dan semua anggota.','Ada lima misi. Tiap misi punya tiga level: Dasar, Lanjutan, Tantangan. Pilih level sesuai kekuatan timmu.','Satu peran memimpin tiap misi, tetapi semua anggota harus ikut mengerjakan. Ketuk namamu saat kamu ikut.','Tekan “Periksa langkah” untuk mengecek jawaban. Kartu petunjuk membantu tetapi mengurangi 2 poin per kartu.','Setelah lolos, kamu boleh naik level untuk poin tambahan selama waktu misi masih ada.','Kode kunci tiap misi khusus untuk timmu. Tunjukkan ke Penjaga Gerbang.','Di akhir, kirim kode hasil tim ke guru.'].map(function(t){return h('li',{},t)}))),
+ h('div',{class:'panel'},h('label',{},'Nama tim'),nm,h('label',{},'Anggota tim'),mm,er,
+  h('button',{class:'btn',onclick:function(){var t=nm.value.trim(),m=mm.value.split('\n').map(function(x){return x.trim()}).filter(Boolean);
+   if(!t||m.length<2){er.textContent='Isi nama tim dan minimal 2 anggota.';return}
+   if(t!==S.tim){S.res={}}S.tim=t;S.mem=m;save();push();nextM()}},'Mulai')))}
+
+function hub(){
+ var n=nDone(),cards=[1,2,3,4,5].map(function(i){var r=S.res[i],rd=!!M[i];
+  return h('div',{class:'panel'},h('div',{class:'row'},h('h3',{},'Misi '+i+' · '+D[i].n),h('span',{class:'st '+(r?'ok':rd?'go':'')},r?'SELESAI':rd?'SIAP':'SEGERA HADIR')),
+   h('p',{class:'mut'},D[i].b+' · pemimpin: '+D[i].r),
+   r?h('p',{},'Kode: ',h('b',{class:'mono ok'},kd(i)),' · level '+r.v.split('').map(function(x){return({D:'Dasar',L:'Lanjutan',T:'Tantangan'})[x]}).join(' → ')+' · '+r.pts+' poin'):null,
+   rd&&!r?h('button',{class:'btn',onclick:function(){pick(i)}},'Mulai misi'):null)});
+ var cb=h('button',{class:'btn sec','data-l':'Salin kode hasil tim'},'Salin kode hasil tim');cb.addEventListener('click',function(){copy(kode(),cb)});
+ show(h('div',{class:'row'},h('div',{},h('p',{class:'mono am'},'// '+S.tim),h('h1',{},'Pusat Kendali')),ring(n)),
+  h('div',{class:'hp'},h('b',{},'BOT-X'),h('div',{class:'hpb',role:'img','aria-label':'Pemulihan '+n+' dari 5'},h('i',{style:'width:'+(n*20)+'%'})),h('span',{class:'mono'},n+'/5')),h('p',{},'Skor tim: ',h('b',{class:'mono'},String(total())),' poin · Anggota: '+S.mem.join(', ')),cards,
+  n===5?h('div',{class:'panel'},h('h2',{class:'ok'},'Peti BOT-X terbuka'),h('p',{},'Kelima kode terkumpul. Lapor ke guru untuk menerima hadiah tim.')):null,
+  h('div',{class:'panel'},h('h3',{},'Kode hasil tim'),h('p',{class:'rd'},kode()),h('p',{class:'mut'},'Kirim kode ini ke guru setelah semua misi yang dikerjakan selesai.'),cb,
+   h('a',{class:'btn sec',target:'_blank',rel:'noopener',href:'https://wa.me/?text='+encodeURIComponent(kode())},'Kirim lewat WhatsApp')),
+  h('button',{class:'btn',onclick:board},'Papan skor kelas'),h('button',{class:'btn sec',onclick:intro},'Ubah tim')) }
+
+function pick(id){
+ var desc={D:'Satu langkah terpandu. Cocok bila timmu masih membangun dasar.',L:'Dua langkah dengan pengaturan sendiri. Untuk tim yang sudah cukup lancar.',T:'Perhitungan dan keputusan mandiri. Untuk tim yang siap ditantang.'};
+ show(h('p',{class:'mono am'},'// MISI '+id),h('h1',{},D[id].n),h('p',{class:'mut'},D[id].b+' · dipimpin '+D[id].r+'. Boleh memilih versi berbeda tiap misi. Poin Dasar 20, Lanjutan 25, Tantangan 30. Setelah lolos, kamu boleh naik level untuk poin tambahan selama waktu misi masih ada.'),
+  VER.map(function(v){return h('div',{class:'panel'},h('h3',{},v.n+' · '+v.p+' poin'),h('p',{class:'mut'},desc[v.k]),h('button',{class:'btn',onclick:function(){run(id,v)}},'Pilih '+v.n))}),
+  h('button',{class:'btn sec',onclick:hub},'Kembali'))}
+
+function run(id,v,ctx){
+ ctx=ctx||{end:Date.now()+DUR(),lv:[],tick:{},tb:false,kb:false};
+ S.active={id:id,ver:v.k,end:ctx.end,lv:ctx.lv,tick:ctx.tick,tb:ctx.tb,kb:ctx.kb};save();
+ var cfg=M[id](v.k),end=ctx.end,used=0,tick=ctx.tick,ok=[],fin=false,iv,
+ tmr=h('span',{class:'mono'}),fb=h('button',{class:'btn',disabled:''},'Selesaikan misi'),hb=h('div',{}),hbtn=h('button',{class:'btn sec'},'Buka kartu petunjuk (−2 poin)');
+ function mmss(ms){ms=Math.max(0,ms);var s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+ function upd(){var r=end-Date.now();tmr.textContent=mmss(r);tmr.className='mono '+(r<5*60000?'am':'');if(r<=0&&!fin)finish(true)}
+ function finish(to){fin=true;clearInterval(iv);var np=ok.filter(Boolean).length,rem=end-Date.now(),base=Math.round(v.p*np/cfg.steps.length),
+  pen=Math.min(used,3)*2,tb=(!to&&!ctx.tb&&np===cfg.steps.length&&rem>5*60000)?3:0,kb=(!ctx.kb&&S.mem.every(function(m){return tick[m]}))?5:0,t=Math.max(0,base-pen+tb+kb);
+  if(tb)ctx.tb=true;if(kb)ctx.kb=true;ctx.lv.push({v:v.k,pts:t,hints:used});
+  var tot=ctx.lv.reduce(function(a,l){return a+l.pts},0);
+  S.res[id]={v:ctx.lv.map(function(l){return l.v}).join(''),pts:tot,hints:ctx.lv.reduce(function(a,l){return a+l.hints},0)};save();push();
+  var nv=(to||np<cfg.steps.length)?null:VER[VER.map(function(q){return q.k}).indexOf(v.k)+1];
+  S.active=(nv&&rem>0)?{id:id,ver:nv.k,end:end,lv:ctx.lv,tick:ctx.tick,tb:ctx.tb,kb:ctx.kb}:null;save();
+  show(h('p',{class:'mono am'},'// MISI '+id+(to?' · WAKTU HABIS':' · SELESAI')),h('h1',{},D[id].n),
+   h('div',{class:'panel'},h('p',{},to?'Waktu habis. Kartu darurat membuka kodenya supaya timmu bisa lanjut. Poin dihitung dari langkah yang lolos.':'Modul pulih. Kode kunci:'),
+    h('h2',{class:'mono ok'},kd(id)),
+    h('table',{},[['Langkah lolos ('+np+'/'+cfg.steps.length+', versi '+v.n+')',base],['Kartu petunjuk ('+Math.min(used,3)+')',-pen],['Bonus waktu',tb],['Bonus semua anggota berperan',kb],['Total level ini',t]].concat(ctx.lv.length>1?[['Total misi (semua level)',tot]]:[]).map(function(r){return h('tr',{},h('td',{},r[0]),h('td',{class:'mono'},(r[1]>0&&r[0].indexOf('Total')!==0?'+':'')+r[1]))}))),
+   nv&&rem>0?h('button',{class:'btn',onclick:function(){if(end-Date.now()<=0){hub();return}run(id,nv,ctx)}},'Naik ke level '+nv.n+' (+'+nv.p+' poin) · sisa '+mmss(rem)):null,h('button',{class:nv&&rem>0?'btn sec':'btn',onclick:function(){S.active=null;save();nextM()}},'Misi berikutnya'),h('button',{class:'btn sec',onclick:function(){S.active=null;save();hub()}},'Pusat kendali'))}
+ hbtn.addEventListener('click',function(){if(hb.children.length>=3)return;used++;hb.append(h('div',{class:'hint'},cfg.hints[hb.children.length]));if(hb.children.length>=3)hbtn.disabled=true});
+ var steps=cfg.steps.map(function(s,i){var msg=h('p',{role:'status'});
+  return h('div',{class:'panel'},h('h3',{},'Langkah '+(i+1)+': '+s.t),s.el,msg,
+   h('button',{class:'btn sec',onclick:function(){var r=s.test();ok[i]=r.ok;msg.className=r.ok?'ok':'bad';msg.textContent=(r.ok?'✔ ':'✖ ')+r.msg;
+    fb.disabled=!ok.length||ok.filter(Boolean).length<cfg.steps.length}},'Periksa langkah'))});
+ show(h('div',{class:'row'},h('div',{},h('p',{class:'mono am'},'// MISI '+id+' · '+v.n.toUpperCase()),h('h1',{},D[id].n)),h('div',{class:'hd'},'⏱ ',tmr)),
+  h('div',{class:'panel'},h('p',{},h('b',{},'Pemimpin misi: '+D[id].r)),h('p',{class:'mut'},'Aturan satu tangan: pemimpin tidak boleh mengerjakan semuanya. Ketuk namamu bila kamu ikut mengerjakan atau memberi ide yang dipakai.'),
+   S.mem.map(function(m){var c=h('button',{class:'chip'+(tick[m]?' on':'')},m);c.addEventListener('click',function(){tick[m]=!tick[m];c.classList.toggle('on',!!tick[m]);save()});return c})),
+  h('div',{class:'panel'},h('p',{},cfg.story),hbtn,hb),steps,fb);
+ fb.addEventListener('click',function(){finish(false)});
+ upd();iv=setInterval(upd,1000)}
+
+// ===== MISI 1: Gerbang Rakit =====
+var POOL=['Motor DC + roda','Roda caster (bebas)','ESP32','Driver L298N','Baterai + dudukan','Sensor HC-SR04','Sensor TCRT5000','LED indikator'];
+function pil(opts){var o=opts.map(function(t,i){return[i,t]}).sort(function(){return Math.random()-.5});o.unshift(['','— pilih —']);return sel(o,'')}
+function slotKit(defs,pool){
+ var ss=defs.map(function(d){return pil(pool?[d[1]].concat(POOL.filter(function(x){return x!==d[1]})):d[1])});
+ return{ss:ss,grid:h('div',{class:'g2'},defs.map(function(d,i){return h('div',{},h('label',{},d[0]),ss[i])})),
+  bad:function(){var b=[];defs.forEach(function(d,i){if(ss[i].value==='')b.push(d[0]+' (kosong)');else if(+ss[i].value!==0)b.push(d[0]+(d[2]?': '+d[2]:''))});return b}}}
+function pins(y){var r='';for(var i=0;i<10;i++)r+='<rect class="ia" x="'+(14+i*11)+'" y="'+y+'" width="5" height="5"/>';return r}
+var ICON={
+ 'Motor DC + roda':{w:52,h:76,s:'<rect class="ic" x="3" y="4" width="22" height="68" rx="7"/><path class="iw" d="M6 16h16M6 28h16M6 40h16M6 52h16M6 64h16"/><rect class="ic" x="28" y="24" width="20" height="28" rx="3"/><rect class="ia" x="25" y="35" width="5" height="6"/>'},
+ 'Roda caster (bebas)':{w:60,h:30,s:'<circle class="ic" cx="30" cy="15" r="12"/><circle class="ia" cx="30" cy="15" r="4"/><path class="iw" d="M18 15h24"/>'},
+ 'ESP32':{w:132,h:52,s:'<rect class="ic" x="6" y="6" width="120" height="40" rx="4"/>'+pins(1)+pins(46)+'<rect fill="var(--line)" x="14" y="14" width="38" height="24" rx="2"/><path class="iw" d="M64 38V16h8v10h8V16h8v10h8V16h8"/>'},
+ 'Driver L298N':{w:132,h:52,s:'<rect class="ic" x="6" y="4" width="120" height="44" rx="4"/><rect class="ia" x="12" y="14" width="14" height="24" rx="2"/><rect class="ia" x="106" y="14" width="14" height="24" rx="2"/><rect fill="var(--line)" x="38" y="8" width="44" height="36" rx="2"/><path class="iw" d="M46 10v32M54 10v32M62 10v32M70 10v32"/>'},
+ 'Baterai + dudukan':{w:132,h:52,s:'<rect class="ic" x="8" y="8" width="52" height="36" rx="6"/><rect class="ic" x="64" y="8" width="52" height="36" rx="6"/><rect class="ia" x="116" y="20" width="8" height="12" rx="2"/><text class="sl" x="34" y="31" text-anchor="middle">−</text><text class="sl" x="90" y="31" text-anchor="middle">+</text>'},
+ 'Sensor HC-SR04':{w:132,h:52,s:'<rect class="ic" x="6" y="6" width="120" height="40" rx="4"/><circle fill="var(--line)" stroke="var(--mut)" cx="36" cy="26" r="14"/><circle class="ia" cx="36" cy="26" r="6"/><circle fill="var(--line)" stroke="var(--mut)" cx="96" cy="26" r="14"/><circle class="ia" cx="96" cy="26" r="6"/>'},
+ 'Sensor TCRT5000':{w:132,h:52,s:'<rect class="ic" x="30" y="8" width="72" height="36" rx="4"/><rect class="ia" x="44" y="18" width="16" height="16"/><rect fill="var(--line)" x="72" y="18" width="16" height="16"/>'},
+ 'LED indikator':{w:132,h:52,s:'<circle class="ie" cx="66" cy="26" r="12"/><path class="iw" d="M66 6v6M66 40v6M44 26h6M82 26h6M50 12l4 4M82 36l4 4M50 40l4-4M82 16l4-4"/>'}};
+function ph(pos,i,name){var q=pos[i],c=ICON[name];if(!c)return'';var sc=Math.min(q[2]/c.w,q[3]/c.h)*.92,x=q[0]+(q[2]-c.w*sc)/2,y=q[1]+(q[3]-c.h*sc)/2,fl=(i===1&&name==='Motor DC + roda');
+ return'<g transform="translate('+(fl?x+c.w*sc:x)+' '+y+') scale('+(fl?-sc:sc)+' '+sc+')">'+c.s+'</g>'}
+function rakitD(){
+ var defs=[['Penggerak kiri','Motor DC + roda'],['Penggerak kanan','Motor DC + roda'],['Roda bebas (belakang tengah)','Roda caster (bebas)'],['Pengendali','ESP32'],['Driver motor','Driver L298N'],['Catu daya','Baterai + dudukan']],
+ kit=slotKit(defs,true),pushed=false,out=h('div',{class:'rd'},'Rakit dulu, lalu uji dorong.'),box=document.createElement('div'),
+ pos=[[0,78,52,76],[248,78,52,76],[120,208,60,30],[84,28,132,52],[84,90,132,52],[84,152,132,52]];
+ box.innerHTML='<svg viewBox="0 0 300 244" role="img" aria-label="Tampak atas sasis robot"><rect class="sb" x="56" y="14" width="188" height="226" rx="14"/><text class="sl" x="150" y="9" text-anchor="middle">DEPAN</text>'+pos.map(function(q){return'<rect class="sb" x="'+q[0]+'" y="'+q[1]+'" width="'+q[2]+'" height="'+q[3]+'" rx="8" stroke-dasharray="4 3"/><g></g>'}).join('')+'</svg>';
+ var gs=box.querySelectorAll('g');
+ kit.ss.forEach(function(x,i){x.addEventListener('change',function(){gs[i].innerHTML=x.value===''?'':ph(pos,i,x.options[x.selectedIndex].text)})});
+ return{el:h('div',{},box,kit.grid,h('div',{style:'margin-top:10px'},h('button',{class:'chip',onclick:function(){if(kit.bad().length){out.textContent='> Uji dorong gagal: rakitan belum lengkap atau ada yang salah.';return}pushed=true;out.textContent='> Uji dorong: roda berputar bebas, sasis kokoh, robot meluncur lurus.'}},'Dorong robot')),out),
+  test:function(){var b=kit.bad();if(b.length)return{ok:false,msg:'Belum tepat → '+b.join(' · ')+'.'};return pushed?{ok:true,msg:'Rakitan benar dan lolos uji dorong.'}:{ok:false,msg:'Rakitan benar. Lakukan uji dorong dulu.'}}}}
+function rakitL(){
+ var kit=slotKit([['HC-SR04 dipasang di',['Depan, menghadap ke depan','Belakang, menghadap ke belakang','Atas, menghadap ke langit','Samping, menghadap dinding'],'sensor jarak harus menghadap arah gerak'],
+  ['TCRT5000 dipasang di',['Bawah depan, menghadap lantai','Atas, menghadap ke atas','Samping, menghadap dinding','Belakang, menghadap ke belakang'],'sensor garis harus menghadap lantai'],
+  ['Jarak TCRT5000 ke lantai',['Sekitar 3–8 mm','Menyentuh lantai (0 mm)','Sekitar 15–20 mm','Sekitar 50 mm'],'pantulan IR lemah bila terlalu jauh dan tidak stabil bila menyentuh lantai'],
+  ['Letak baterai',['Rendah, dekat roda penggerak','Tinggi di bagian belakang','Menggantung di depan sasis','Di atas ESP32'],'beban berat sebaiknya rendah dan dekat roda penggerak'],
+  ['Roda caster',['Di garis tengah sasis','Di sisi kiri saja','Di atas sasis','Tidak dipasang'],'caster menopang di garis tengah']],false),
+ ran=false,out=h('div',{class:'rd'},'Pilih posisi komponen, lalu jalankan uji jalan lurus.');
+ return{el:h('div',{},h('p',{class:'mut'},'Kamu hanya punya sketsa kasar. Tentukan sendiri posisi komponen agar robot stabil dan sensor bekerja.'),kit.grid,
+  h('div',{style:'margin-top:10px'},h('button',{class:'chip',onclick:function(){if(kit.bad().length){out.textContent='> Uji jalan lurus 1 m: gagal, ada posisi yang belum tepat.';return}ran=true;out.textContent='> Uji jalan lurus 1 m: simpangan 3 cm, sensor terbaca normal.'}},'Uji jalan lurus 1 m')),out),
+  test:function(){var b=kit.bad();if(b.length)return{ok:false,msg:'Belum tepat → '+b.join(' · ')+'.'};return ran?{ok:true,msg:'Posisi komponen tepat dan lolos uji jalan lurus.'}:{ok:false,msg:'Posisi tepat. Jalankan uji jalan lurus dulu.'}}}}
+function cek(opts){var it=opts.map(function(o){var c=h('input',{type:'checkbox'});return{c:c,ok:o[1],el:h('label',{class:'opt'},c,h('span',{},o[0]))}}).sort(function(){return Math.random()-.5});
+ return{el:h('div',{},it.map(function(i){return i.el})),res:function(){var m=0,w=0;it.forEach(function(i){if(i.ok&&!i.c.checked)m++;if(!i.ok&&i.c.checked)w++});return{m:m,w:w}}}}
+function rakitT(){
+ var F={0:'Roda kiri terasa berat dan menggesek bodi sasis.',1:'Roda kanan berputar ringan.',2:'Diameter roda kiri 64 mm, kanan 65 mm.',3:'Baut as kiri longgar, as miring.',4:'Roda caster berputar bebas.'},
+ o1=h('div',{class:'rd'},'Uji jalan lurus 1 m tiga kali: simpangan ke kiri 27 cm, 29 cm, 28 cm. Periksa robotnya.'),
+ ch=[['Putar roda kiri',0],['Putar roda kanan',1],['Ukur diameter roda',2],['Periksa baut as kiri',3],['Putar caster',4]].map(function(x){return h('button',{class:'chip',onclick:function(){o1.textContent+='\n> '+x[0]+': '+F[x[1]]}},x[0])}),
+ c1=cek([['Roda kiri bergesekan dengan bodi sasis',1],['As roda kiri longgar sehingga miring',1],['Diameter roda kiri dan kanan berbeda jauh',0],['Roda caster macet',0],['Sensor ultrasonik miring',0],['Baterai kurang penuh',0]]),
+ c2=cek([['Kencangkan dan luruskan as roda kiri',1],['Beri jarak (ring/washer) agar roda kiri tidak menggesek bodi',1],['Naikkan PWM roda kanan 20% di program',0],['Ganti ESP32',0],['Lepas roda caster',0]]),
+ o2=h('div',{class:'rd'},'Pilih perbaikan, lalu uji ulang.'),ran=false;
+ return{steps:[
+  {t:'Periksa robot dan temukan penyebab',el:h('div',{},o1,h('div',{style:'margin-top:10px'},ch),h('label',{},'Penyebab simpangan (boleh lebih dari satu):'),c1.el),
+   test:function(){var r=c1.res();return r.m+r.w===0?{ok:true,msg:'Dua penyebab mekanik yang tepat, sesuai hasil pemeriksaan.'}:{ok:false,msg:(r.m?'Masih ada penyebab yang belum kamu temukan. ':'')+(r.w?'Ada pilihan yang tidak didukung hasil pemeriksaan.':'')}}},
+  {t:'Perbaiki tanpa mengubah kode dan uji ulang',el:h('div',{},h('label',{},'Perbaikan (boleh lebih dari satu):'),c2.el,h('div',{style:'margin-top:10px'},h('button',{class:'chip',onclick:function(){var r=c2.res(),e=r.m+r.w===0;ran=e;o2.textContent='> Uji ulang 1 m: simpangan '+(e?6:Math.max(6,28-11*(2-r.m)))+' cm (target di bawah 10 cm)'+(r.w?'. Ingat: robot diperbaiki tanpa mengubah kode.':'')}},'Uji ulang 1 m')),o2),
+   test:function(){var r=c2.res();return r.m+r.w!==0?{ok:false,msg:r.w?'Ada perbaikan yang tidak tepat atau melanggar aturan tanpa mengubah kode.':'Perbaikanmu belum menutup semua penyebab.'}:ran?{ok:true,msg:'Robot lurus lagi, simpangan 6 cm.'}:{ok:false,msg:'Perbaikan tepat. Lakukan uji ulang dulu.'}}}]}}
+M[1]=function(k){var s='Pintu pertama hanya terbuka bagi robot yang bergerak lurus dan stabil.';
+ if(k==='D'){var a=rakitD();return{story:s+' Rakit sasis robot dua roda penggerak.',steps:[{t:'Rakit sasis dan uji dorong',el:a.el,test:a.test}],hints:['Penggerak butuh motor DC lengkap dengan roda, satu di kiri dan satu di kanan.','Roda bebas (caster) hanya menopang, bukan penggerak. ESP32 sebagai pengendali, L298N menggerakkan motor, baterai sebagai catu daya.','Kiri dan kanan: Motor DC + roda. Belakang tengah: roda caster. Pengendali: ESP32. Driver: L298N. Catu daya: baterai.']}}
+ if(k==='L'){var b=rakitL();return{story:s+' Tentukan posisi komponen dari sketsa.',steps:[{t:'Tentukan posisi komponen dan uji jalan',el:b.el,test:b.test}],hints:['Sensor jarak menghadap arah gerak, sensor garis menghadap lantai.','Jarak TCRT5000 ke lantai: dekat tetapi tidak menyentuh, hanya beberapa milimeter.','Beban berat rendah dan dekat roda penggerak, caster di garis tengah.']}}
+ var t=rakitT();return{story:s+' Robot ini melenceng. Temukan penyebabnya dan perbaiki tanpa mengubah kode.',steps:t.steps,hints:['Melenceng ke kiri berarti sisi kiri tertahan atau lebih lambat dari kanan. Periksa kedua roda.','Gesekan dan kelonggaran as pada satu sisi membuat roda itu lebih lambat. Diameter roda kiri dan kanan hampir sama.','Penyebab: roda kiri bergesekan dengan bodi dan as kiri longgar. Perbaikan: luruskan/kencangkan as dan beri jarak (washer), tanpa mengubah kode.']}};
+
+// ===== MISI 5: Evakuasi (Final) =====
+var SCN={D:{ob:[[250,15,20,50]],fin:null},L:{ob:[],fin:225},T:{ob:[[120,25,20,30]],fin:235}};
+function ray(sc,x,y,hd){for(var d=0;d<=200;d++){var px=x+Math.cos(hd)*d,py=y+Math.sin(hd)*d;if(px<0||px>280||py<0||py>80)return d;
+ for(var i=0;i<sc.ob.length;i++){var o=sc.ob[i];if(px>=o[0]&&px<=o[0]+o[2]&&py>=o[1]&&py<=o[1]+o[3])return d}}return 200}
+function sim5(sc,rules){var x=20,y=40,hd=0,R=8,dt=.05,v=25,tn=1.5708*dt,tr=[[x,y,hd]],mc=null,idle=0;
+ function hit(){if(x-R<0||x+R>280||y-R<0||y+R>80)return'dinding ujung lintasan';
+  for(var i=0;i<sc.ob.length;i++){var o=sc.ob[i],cx=Math.max(o[0],Math.min(x,o[0]+o[2])),cy=Math.max(o[1],Math.min(y,o[1]+o[3]));if((x-cx)*(x-cx)+(y-cy)*(y-cy)<R*R)return'halangan'}return null}
+ function fwd(m){x+=Math.cos(hd)*m;y+=Math.sin(hd)*m}
+ function black(){return sc.fin!=null&&x>=sc.fin&&x<=sc.fin+8}
+ function fin(r){r.tr=tr;r.x=x;r.black=black();r.gap=ray(sc,x+Math.cos(hd)*R,y+Math.sin(hd)*R,hd);return r}
+ for(var t=0;t<400;t++){
+  if(mc){var q=mc.q[mc.i];if(mc.rem==null)mc.rem=q[1];
+   if(q[0]==='t'){var dh=Math.min(Math.abs(mc.rem),tn)*(mc.rem<0?-1:1);hd+=dh;mc.rem-=dh}else{var m=Math.min(mc.rem,v*dt);fwd(m);mc.rem-=m}
+   if(Math.abs(mc.rem)<1e-6){mc.i++;mc.rem=null;if(mc.i>=mc.q.length)mc=null}}
+  else{var d=ray(sc,x+Math.cos(hd)*R,y+Math.sin(hd)*R,hd),bk=black(),act=null;
+   for(var i=0;i<rules.length;i++){var c=rules[i][0];if(c==='all'||(c==='line'&&bk)||(c.charAt(0)==='d'&&d<+c.slice(1))){act=rules[i][1];break}}
+   if(act==='maju'){fwd(v*dt);idle=0}else if(act==='kiri'){hd-=tn;idle=0}else if(act==='kanan'){hd+=tn;idle=0}
+   else if(act==='hindari'){mc={i:0,rem:null,q:[['t',-1.5708],['f',30],['t',1.5708],['f',60]]};idle=0}else idle++;
+   if(idle>=10)return fin({r:'stop'})}
+  tr.push([x,y,hd]);var h2=hit();if(h2)return fin({r:'crash',w:h2})}
+ return fin({r:'timeout'})}
+function prog5(k,n){
+ var sc=SCN[k],snap=null,good=false,svg=document.createElement('div'),tm=null,
+ C=[['d10','jarak < 10 cm'],['d20','jarak < 20 cm'],['d30','jarak < 30 cm'],['d40','jarak < 40 cm'],['line','garis = HITAM'],['all','selalu']],
+ A=[['maju','maju'],['berhenti','berhenti'],['hindari','hindari halangan'],['kiri','belok kiri'],['kanan','belok kanan']],
+ rows=[],i,log=h('div',{class:'rd'},'Susun aturan, lalu jalankan robot.'),code=h('div',{class:'rd'});
+ for(i=0;i<n;i++)rows.push([sel(C,'all'),sel(A,'maju')]);
+ svg.innerHTML='<svg viewBox="0 0 300 100" role="img" aria-label="Lintasan evakuasi">'+'<rect class="sb" x="10" y="10" width="280" height="80"/>'
+  +(sc.fin!=null?'<rect x="'+(10+sc.fin)+'" y="10" width="8" height="80" style="fill:var(--ink)"/><text class="sl" x="'+(14+sc.fin)+'" y="7" text-anchor="middle">FINISH</text>':'')
+  +sc.ob.map(function(o){return'<rect class="ic" x="'+(10+o[0])+'" y="'+(10+o[1])+'" width="'+o[2]+'" height="'+o[3]+'"/>'}).join('')
+  +'<g class="rb5" transform="translate(30 50)"><circle class="ic" r="8"/><path class="wr" d="M0 0H8"/></g></svg>';
+ var rb=svg.querySelector('.rb5');
+ function key(){return rows.map(function(r){return r[0].value+'>'+r[1].value}).join('|')}
+ function cur(){return rows.map(function(r){return[r[0].value,r[1].value]})}
+ function sc2(){code.textContent=rows.map(function(r,j){var c=r[0].value,a=r[1].options[r[1].selectedIndex].text;return(j?'else ':'')+(c==='all'?'':'if ('+r[0].options[r[0].selectedIndex].text+') ')+a+'();'}).join('\n')}
+ rows.forEach(function(r){r[0].addEventListener('change',sc2);r[1].addEventListener('change',sc2)});sc2();
+ function play(tr){clearInterval(tm);var q=0,st=Math.max(1,Math.ceil(tr.length/110));tm=setInterval(function(){q+=st;if(q>=tr.length){q=tr.length-1;clearInterval(tm)}var p=tr[q];rb.setAttribute('transform','translate('+(10+p[0])+' '+(10+p[1])+') rotate('+(p[2]*57.2958)+')')},35)}
+ var goal={D:'Robot harus berhenti 5–35 cm sebelum halangan di ujung lintasan, tanpa menabrak.',L:'Robot harus berhenti tepat di garis finish hitam menggunakan sensor garis.',T:'Robot harus melewati halangan di tengah lalu berhenti tepat di garis finish. Perhatikan urutan aturan: aturan dibaca dari atas, yang pertama cocok dijalankan.'}[k];
+ return{el:h('div',{},svg,h('p',{class:'mut'},goal+' Robot membaca aturan dari atas ke bawah dan menjalankan aturan pertama yang cocok.'),
+  rows.map(function(r,j){return h('div',{},h('label',{},'Aturan '+(j+1)+': JIKA … MAKA …'),h('div',{class:'g2'},r[0],r[1]))}),code,
+  h('button',{class:'chip',style:'margin-top:10px',onclick:function(){var o=sim5(sc,cur()),msg,ok=false;play(o.tr);
+   if(o.r==='crash')msg='Robot menabrak '+o.w+'.';else if(o.r==='timeout')msg='Waktu habis, robot tidak berhenti.';
+   else if(k==='D'){ok=o.gap>=5&&o.gap<=35;msg='Robot berhenti '+o.gap.toFixed(0)+' cm dari halangan'+(ok?'.':' (target 5–35 cm).')}
+   else{ok=o.black;msg=ok?'Robot berhenti tepat di garis finish.':'Robot berhenti di tempat yang salah, bukan di garis finish.'}
+   good=ok;snap=key();log.textContent='> '+(ok?'✔ ':'✖ ')+msg}},'Jalankan robot'),log),
+  test:function(){return snap!==key()?{ok:false,msg:'Jalankan robot dengan susunan aturan ini dulu.'}:good?{ok:true,msg:'Misi berhasil: robot mencapai tujuannya.'}:{ok:false,msg:'Belum berhasil. Baca hasil uji dan periksa urutan aturan.'}}}}
+M[5]=function(k){var s='BOT-X hampir pulih. Robot timmu harus melewati lintasan untuk menyalakan sistem utama.';
+ var n={D:2,L:2,T:3}[k],a=prog5(k,n),st={D:' Hentikan robot sebelum halangan.',L:' Hentikan robot tepat di garis finish.',T:' Lewati halangan lalu berhenti di garis finish.'}[k];
+ return{story:s+st,steps:[{t:'Susun aturan robot dan jalankan di lintasan',el:a.el,test:a.test}],hints:{
+  D:['Robot memeriksa aturan dari atas ke bawah dan menjalankan aturan pertama yang cocok.','Aturan "selalu → maju" harus di paling bawah, kalau tidak aturan lain tidak pernah dibaca.','Aturan 1: jarak < 20 cm → berhenti. Aturan 2: selalu → maju.'],
+  L:['Sensor garis melihat HITAM saat robot melintasi garis finish.','Aturan yang menghentikan robot harus dibaca sebelum aturan "selalu → maju".','Aturan 1: garis = HITAM → berhenti. Aturan 2: selalu → maju.'],
+  T:['Ada dua hal yang harus ditangani: halangan di tengah dan garis finish di ujung.','Berhenti di depan halangan tidak mencapai finish. Robot harus melewati halangan dulu. Awas, dinding di ujung lintasan juga terbaca sebagai halangan.','Aturan 1: garis = HITAM → berhenti. Aturan 2: jarak < 20 cm → hindari halangan. Aturan 3: selalu → maju.']}[k]}};
+
+// ===== MISI 2: Kode Pintu =====
+function rng(seed){var q=seed>>>0;return function(){q=(Math.imul(q,1664525)+1013904223)>>>0;return q/4294967296}}
+function simJ(o){var R=rng(o.seed||7),x=0,OB=120,v=o.pwm/255*30,tr=[0],last=OB,sp=0;
+ function sample(){var d=OB-x;if(!o.noise)return d;var r=R();if(r<.10)return 0;if(r<.15)return d+60;return d+(R()-.5)*3}
+ function read(){var a=[],n=o.n||1;for(var i=0;i<n;i++){var q=sample();if(o.noise&&q===0){if(o.to==='jauh')q=400;else if(o.to==='skip')continue}a.push(q)}
+  if(!a.length)return last;var r;if(o.est==='med'){a.sort(function(p,q){return p-q});r=a[Math.floor(a.length/2)]}else if(o.est==='avg'){r=a.reduce(function(p,q){return p+q},0)/a.length}else r=a[0];last=r;return r}
+ for(var t=0;t<240;t++){var d=read(),stop=d<o.thr;if(stop&&OB-x>o.thr+15)sp++;
+  if(!stop){x+=v*.05;if(x>=OB){tr.push(OB);return{gap:0,hit:true,sp:sp,tr:tr}}}tr.push(x)}
+ return{gap:OB-x,hit:false,sp:sp,tr:tr}}
+function arena(){var box=document.createElement('div'),tm=null;
+ box.innerHTML='<svg viewBox="0 0 320 100" role="img" aria-label="Lintasan robot"><line class="sb" x1="6" y1="74" x2="314" y2="74"/><g class="ob"><rect class="ic" x="276" y="34" width="30" height="40"/><text class="sl" x="291" y="28" text-anchor="middle">HALANGAN</text></g><g class="rb"><rect class="ic" x="6" y="48" width="30" height="22" rx="5"/><circle class="ia" cx="14" cy="72" r="5"/><circle class="ia" cx="28" cy="72" r="5"/><rect class="ia" x="32" y="54" width="4" height="8"/></g><text class="mm" x="8" y="18">—</text></svg>';
+ var rb=box.querySelector('.rb'),tx=box.querySelector('.mm'),ob=box.querySelector('.ob');
+ function put(x,obs){rb.setAttribute('transform','translate('+(x*2)+' 0)');tx.textContent=obs?'jarak: '+Math.max(0,120-x).toFixed(0)+' cm':'posisi: '+x.toFixed(0)+' cm'}
+ return{el:box,mode:function(v){ob.style.display=v?'':'none';clearInterval(tm);put(0,v)},
+  play:function(tr,obs){clearInterval(tm);var i=0,st=Math.max(1,Math.ceil(tr.length/90));tm=setInterval(function(){i+=st;if(i>=tr.length){i=tr.length-1;clearInterval(tm)}put(tr[i],obs)},35)}}}
+function simD(rows){var x=0,tr=[0];rows.forEach(function(r){var v=r[0]==='maju'?20:r[0]==='mundur'?-20:0,n=Math.round(r[1]/.05);for(var i=0;i<n;i++){x+=v*.05;tr.push(x)}});return{x:x,tr:tr}}
+function progD(){
+ var ar=arena(),ran=null,log=h('div',{class:'rd'},'Susun program tiga baris, lalu jalankan.'),
+ A=['maju','mundur','berhenti','belok kiri','belok kanan'].map(function(a){return[a,a]}),
+ rows=[0,1,2].map(function(){return[sel(A,'maju'),sel([[1,'1 detik'],[2,'2 detik'],[3,'3 detik']],1)]});
+ ar.mode(false);
+ function cur(){return rows.map(function(r){return[r[0].value,+r[1].value]})}
+ return{el:h('div',{},ar.el,h('p',{class:'mut'},'Robot harus maju 2 detik, berhenti, lalu mundur 2 detik sampai kembali ke titik awal. Kecepatan 20 cm per detik.'),
+  rows.map(function(r,i){return h('div',{},h('label',{},'Baris '+(i+1)),h('div',{class:'g2'},r[0],r[1]))}),
+  h('button',{class:'chip',style:'margin-top:10px',onclick:function(){var c=cur(),q=simD(c);ran=JSON.stringify(c);ar.play(q.tr,false);log.textContent='> Posisi akhir: '+q.x.toFixed(0)+' cm dari titik awal'}},'Jalankan program'),log),
+  test:function(){var c=cur();
+   if(!(c[0][0]==='maju'&&c[0][1]===2))return{ok:false,msg:'Baris 1: robot harus maju selama 2 detik.'};
+   if(c[1][0]!=='berhenti')return{ok:false,msg:'Baris 2: robot harus berhenti.'};
+   if(!(c[2][0]==='mundur'&&c[2][1]===2))return{ok:false,msg:'Baris 3: robot harus mundur 2 detik agar kembali ke titik awal.'};
+   return ran===JSON.stringify(c)?{ok:true,msg:'Robot maju, berhenti, lalu kembali tepat ke titik awal.'}:{ok:false,msg:'Programnya sudah benar. Jalankan dulu untuk membuktikan.'}}}}
+function progL(){
+ var ar=arena(),okp={},log=h('div',{class:'rd'},'Atur batas dan kecepatan, lalu jalankan.'),code=h('div',{class:'rd'}),
+ pw=sel([[120,'PWM 120 (pelan)'],[180,'PWM 180'],[255,'PWM 255 (cepat)']],180),th=sel([[5,'5 cm'],[10,'10 cm'],[15,'15 cm'],[20,'20 cm'],[30,'30 cm'],[50,'50 cm']],20);
+ function sc(){code.textContent='void loop() {\n  jarak = bacaJarak();\n  if (jarak < '+th.value+') berhenti();\n  else maju(PWM = '+pw.value+');\n}'}
+ ar.mode(true);sc();pw.addEventListener('change',sc);th.addEventListener('change',sc);
+ return{el:h('div',{},ar.el,h('p',{class:'mut'},'Robot harus berhenti 10–25 cm di depan halangan. Buktikan kecepatan bisa diubah lewat satu variabel: jalankan dengan dua nilai PWM berbeda.'),
+  h('div',{class:'g2'},h('div',{},h('label',{},'Batas berhenti'),th),h('div',{},h('label',{},'Kecepatan'),pw)),code,
+  h('button',{class:'chip',style:'margin-top:10px',onclick:function(){var r=simJ({pwm:+pw.value,thr:+th.value,n:1,est:'one',noise:0}),ok=!r.hit&&r.gap>=10&&r.gap<=25;if(ok)okp[pw.value+'|'+th.value]=1;ar.play(r.tr,true);
+   log.textContent+='\n> PWM '+pw.value+', batas '+th.value+' cm: '+(r.hit?'MENABRAK halangan':'berhenti '+r.gap.toFixed(1)+' cm dari halangan'+(ok?' ✔':' (di luar 10–25 cm)'))}},'Jalankan'),log),
+  test:function(){var n=Object.keys(okp).filter(function(k){return k.split('|')[1]===th.value}).length;return n>=2?{ok:true,msg:'Berhenti 10–25 cm dengan dua kecepatan berbeda, hanya mengubah satu variabel.'}:n===1?{ok:false,msg:'Satu kecepatan sudah berhasil. Coba kecepatan lain dengan batas yang sama.'}:{ok:false,msg:'Belum ada percobaan yang berhenti 10–25 cm dari halangan.'}}}}
+function progT(){
+ var ar=arena(),snap=null,good=false,log=h('div',{class:'rd'},'Sensor kadang salah baca. Pilih cara membaca yang tahan derau, lalu uji.'),code=h('div',{class:'rd'}),
+ es=sel([['one','satu kali pembacaan'],['avg','rata-rata 5 pembacaan'],['med','nilai tengah (median) 5 pembacaan']],'one'),
+ to=sel([['0','anggap 0 cm'],['jauh','anggap jauh (400 cm)'],['skip','abaikan, pakai pembacaan lain']],'0'),th=sel([[10,'10 cm'],[15,'15 cm'],[20,'20 cm'],[30,'30 cm']],20);
+ function key(){return es.value+'|'+to.value+'|'+th.value}
+ function sc(){code.textContent='nilai = '+({one:'bacaJarak()',avg:'rata2(bacaJarak() x5)',med:'median(bacaJarak() x5)'})[es.value]+';\n// bila tidak ada pantulan (0): '+to.options[to.selectedIndex].text+'\nif (nilai < '+th.value+') berhenti();\nelse maju();'}
+ ar.mode(true);sc();[es,to,th].forEach(function(e){e.addEventListener('change',sc)});
+ return{el:h('div',{},ar.el,h('p',{class:'mut'},'Sensor kadang terbaca 0 (tidak ada pantulan) atau melonjak. Robot harus berhenti 8–25 cm di depan halangan tanpa pernah berhenti palsu di tengah jalan, dan tidak cukup dengan satu pembacaan.'),
+  h('label',{},'Cara membaca jarak'),es,h('label',{},'Bila tidak ada pantulan (0)'),to,h('label',{},'Batas berhenti'),th,code,
+  h('button',{class:'chip',style:'margin-top:10px',onclick:function(){var rs=[3,11,23,42,97].map(function(sd){return simJ({pwm:180,thr:+th.value,n:es.value==='one'?1:5,est:es.value,to:to.value,noise:1,seed:sd})}),
+   oks=rs.map(function(r){return!r.hit&&r.sp===0&&r.gap>=8&&r.gap<=25});good=oks.every(Boolean)&&es.value!=='one';snap=key();ar.play(rs[0].tr,true);
+   log.textContent='> Uji 5 kali dengan derau:\n'+rs.map(function(r,i){return(oks[i]?'✔ ':'✖ ')+'Uji '+(i+1)+': '+(r.hit?'menabrak':'berhenti '+r.gap.toFixed(0)+' cm dari halangan')+(r.sp?', berhenti palsu '+r.sp+'x':'')}).join('\n')+(es.value==='one'?'\nSatu pembacaan rawan tertipu, gunakan beberapa pembacaan.':'')}},'Uji 5 kali dengan derau'),log),
+  test:function(){return snap!==key()?{ok:false,msg:'Jalankan pengujian dengan pengaturan ini dulu.'}:good?{ok:true,msg:'Lolos 5 uji dengan derau: tidak ada berhenti palsu dan berhenti di jarak aman.'}:{ok:false,msg:'Belum lolos. Lihat hasil uji: cari penyebab menabrak atau berhenti palsu.'}}}}
+M[2]=function(k){var s='Pintu kedua meminta robot yang bisa mengambil keputusan.';
+ if(k==='D'){var a=progD();return{story:s+' Susun program gerak sederhana.',steps:[{t:'Susun program gerak',el:a.el,test:a.test}],hints:['Setiap baris punya aksi dan lama dalam detik. Program berjalan dari baris 1 sampai 3.','Maju dan mundur dengan lama yang sama membuat robot kembali ke titik awal.','Baris 1: maju 2 detik. Baris 2: berhenti. Baris 3: mundur 2 detik.']}}
+ if(k==='L'){var b=progL();return{story:s+' Buat robot berhenti sebelum halangan dengan sensor jarak.',steps:[{t:'Berhenti di depan halangan',el:b.el,test:b.test}],hints:['Robot membaca jarak lalu membandingkannya dengan batas. Jika jarak lebih kecil dari batas, ia berhenti.','Batas terlalu kecil membuat robot berhenti terlalu dekat atau menabrak. Terlalu besar membuatnya berhenti terlalu jauh. Targetnya 10–25 cm.','Pilih batas 15 atau 20 cm, lalu jalankan dengan dua nilai PWM berbeda.']}}
+ var c=progT();return{story:s+' Sensor ultrasonik tidak selalu jujur. Buat robot tahan terhadap derau.',steps:[{t:'Baca jarak yang tahan derau',el:c.el,test:c.test}],hints:['Pembacaan sensor tidak selalu benar: kadang 0 (tidak ada pantulan), kadang melonjak.','Satu pembacaan mudah tertipu. Ambil beberapa pembacaan dan pilih nilai yang tahan terhadap lonjakan.','Coba nilai tengah (median) dari 5 pembacaan, anggap tidak ada pantulan sebagai jarak jauh atau abaikan, lalu batas 15–30 cm sesuai pilihan.']}};
+
+// ===== MISI 4: Robot Rusak =====
+var PTS={bat:[48,54],v12:[112,108],outL:[112,178],outR:[208,178],sg:[160,108],en:[204,108],gnd:[200,84],trig:[258,86],echo:[300,86],tcg:[91,117],tcv:[60,146],esp5:[270,46]};
+var WRS={cat:'M90 32H100V110H112',gnd:'M226 56H176V110',sig:'M236 70V90H160V110',enb:'M250 70V92H204V110',mL:'M112 180V198H48V215',mR:'M208 180V198H272V215',trg:'M258 70V100',ech:'M300 70V100',tcg:'M82 117H100',tcv:'M44 134V150H112'};
+function robotRusak(sc){
+ var out=h('div',{class:'rd'},'Gejala: '+sc.g+'\nKetuk titik ukur bertanda pada gambar robot.'),box=document.createElement('div'),
+ B=[['BATERAI',6,10,84,44],['ESP32',226,10,88,60],['L298N',100,110,120,70],['MOTOR KIRI',6,215,84,44],['MOTOR KANAN',230,215,84,44],['HC-SR04',232,100,82,34],['TCRT5000',6,100,76,34]];
+ box.innerHTML='<svg viewBox="0 0 320 340" role="group" aria-label="Skema robot dengan titik ukur">'
+  +Object.keys(WRS).map(function(k){return'<path class="wr2" id="w-'+k+'" d="'+WRS[k]+'"/>'}).join('')
+  +B.map(function(q){return'<rect class="sb" x="'+q[1]+'" y="'+q[2]+'" width="'+q[3]+'" height="'+q[4]+'" rx="6" style="fill:var(--panel)"/><text class="sl" x="'+(q[1]+q[3]/2)+'" y="'+(q[2]+q[4]/2+3)+'" text-anchor="middle">'+q[0]+'</text>'}).join('')
+  +'<rect class="sb" x="96" y="272" width="128" height="62" rx="10"/><rect x="106" y="280" width="108" height="28" rx="4" style="fill:var(--bg);stroke:var(--line)"/><text class="mm" x="160" y="299" text-anchor="middle">— —</text><text class="bl" x="160" y="326" text-anchor="middle">MULTIMETER</text>'
+  +'<path class="pr k" d="M190 272L160 192"/><circle class="sd" cx="160" cy="192" r="3"/><text class="bl" x="168" y="196">GND</text><path class="pr r" d=""/>'
+  +sc.tp.map(function(t){var q=PTS[t[0]];return'<circle class="sd" cx="'+q[0]+'" cy="'+q[1]+'" r="3.5" pointer-events="none"/><circle class="pt" data-k="'+t[0]+'" cx="'+q[0]+'" cy="'+q[1]+'" r="12"><title>'+t[1]+'</title></circle>'}).join('')+'</svg>';
+ var svg=box.firstChild,lcd=svg.querySelector('.mm'),red=svg.querySelector('.pr.r');
+ svg.querySelectorAll('.pt').forEach(function(c){c.addEventListener('click',function(){var t=sc.tp.filter(function(x){return x[0]===c.getAttribute('data-k')})[0],q=PTS[t[0]];
+  lcd.textContent=t[3];red.setAttribute('d','M130 272L'+q[0]+' '+q[1]);svg.querySelectorAll('.pt').forEach(function(o){o.classList.remove('on')});c.classList.add('on');out.textContent+='\n> '+t[1]+': '+t[2]})});
+ var f=cek(sc.f),x=cek(sc.x),o2=h('div',{class:'rd'},'Pilih perbaikan, lalu uji 5 gerakan.'),ran=false,an=document.createElement('div'),atm=[];
+ an.innerHTML='<svg viewBox="0 0 300 100" role="img" aria-label="Animasi uji 5 gerakan"><rect class="sb" x="6" y="8" width="288" height="84" rx="8"/><rect class="ic" x="256" y="28" width="22" height="44"/><g class="rbA" style="transform:translate(40px,56px)"><rect class="ic" x="-16" y="-11" width="32" height="22" rx="5"/><circle class="ia" cx="-8" cy="12" r="4"/><circle class="ia" cx="8" cy="12" r="4"/><rect class="ia" x="12" y="-4" width="4" height="8"/></g><text class="sl" x="14" y="24"></text></svg>';
+ function anim(bad){var rg=an.querySelector('.rbA'),st=an.querySelector('text'),sq=[['maju',130,0],['mundur',90,0],['belok kiri',90,-90],['belok kanan',90,0],['berhenti saat ada halangan',215,0]],cx=40,ca=0,i=0;
+  atm.forEach(clearTimeout);atm=[];rg.style.transition='none';rg.style.transform='translate(40px,56px) rotate(0deg)';
+  function nx(){if(i>=5){st.textContent=bad?'Uji selesai: ada gerakan yang gagal':'Semua gerakan lancar ✔';return}
+   var q=sq[i],good=i<5-bad;st.textContent=(i+1)+'. '+q[0]+(good?'':'  ✖ tersendat');rg.style.transition='transform .55s';
+   if(good){cx=q[1];ca=q[2];rg.style.transform='translate('+cx+'px,56px) rotate('+ca+'deg)'}
+   else{rg.style.transform='translate('+(cx+7)+'px,56px) rotate('+ca+'deg)';atm.push(setTimeout(function(){rg.style.transform='translate('+(cx-3)+'px,56px) rotate('+ca+'deg)'},180))}
+   i++;atm.push(setTimeout(nx,good?800:650))}
+  atm.push(setTimeout(nx,60))}
+ return[{t:'Ukur dan temukan kesalahan',el:h('div',{},box,out,h('label',{},'Kesalahan yang kamu temukan (boleh lebih dari satu):'),f.el),
+  test:function(){var r=f.res();return r.m+r.w===0?{ok:true,msg:'Semua kesalahan ditemukan dan didukung hasil pengukuran.'}:{ok:false,msg:(r.m?'Masih ada '+r.m+' kesalahan yang belum kamu temukan. ':'')+(r.w?'Ada pilihan yang tidak didukung hasil pengukuran.':'')}}},
+ {t:'Perbaiki dan uji 5 gerakan',el:h('div',{},h('label',{},'Perbaikan (boleh lebih dari satu):'),x.el,h('div',{style:'margin-top:10px'},h('button',{class:'chip',onclick:function(){var r=x.res(),G=['maju','mundur','belok kiri','belok kanan','berhenti saat ada halangan'],bad=(r.m+r.w===0)?0:Math.min(5,r.m+r.w+1);ran=bad===0;
+   o2.textContent=G.map(function(n,i){return(i<5-bad?'✔ ':'✖ ')+n}).join('\n')+(r.w?'\nPerbaikan yang keliru bisa memperburuk keadaan.':'');
+   if(ran)sc.fw.forEach(function(k){svg.querySelector('#w-'+k).classList.add('fx')});anim(bad)}},'Uji 5 gerakan')),o2,an),
+  test:function(){var r=x.res();return r.m+r.w!==0?{ok:false,msg:r.w?'Ada perbaikan yang tidak tepat.':'Perbaikanmu belum menutup semua kesalahan.'}:ran?{ok:true,msg:'Robot lolos uji 5 gerakan. Sambungan yang diperbaiki berwarna hijau di gambar.'}:{ok:false,msg:'Perbaikan tepat. Lakukan uji 5 gerakan dulu.'}}}]}
+M[4]=function(k){var s='Pintu keempat adalah robot yang sakit. Timmu adalah teknisinya.';
+ if(k==='D')return{story:s+' Satu kesalahan menunggu ditemukan.',steps:robotRusak({g:'Kedua motor diam saat robot diperintah maju, LED ESP32 menyala.',fw:['cat'],
+  tp:[['bat','Tegangan baterai','7,4 V','7,4 V'],['v12','Terminal 12V L298N','0 V (tidak ada tegangan)','0,0 V'],['outL','Output motor kiri (OUT1-OUT2)','0 V saat diperintah maju','0,0 V'],['outR','Output motor kanan (OUT3-OUT4)','0 V saat diperintah maju','0,0 V'],['esp5','Pin 5V ESP32 (dari USB)','5,0 V','5,0 V'],['sg','Sinyal IN1 L298N','3,3 V saat diperintah maju','3,3 V']],
+  f:[['Kabel catu motor ke terminal 12V L298N terlepas',1],['Kedua motor rusak',0],['ESP32 tidak mengirim sinyal',0],['Baterai habis',0]],
+  x:[['Pasang kembali kabel catu (+ baterai) ke terminal 12V L298N',1],['Ganti ESP32',0],['Ganti kedua motor',0],['Naikkan PWM ke 100%',0]]}),
+  hints:['Mulai dari yang paling dasar: apakah catu daya sampai ke L298N?','Ukur tegangan di terminal 12V L298N dan bandingkan dengan tegangan baterai.','Baterai 7,4 V tetapi terminal 12V L298N 0 V, berarti kabel catu terlepas.']};
+ if(k==='L')return{story:s+' Dua kesalahan menunggu ditemukan.',steps:robotRusak({g:'Diperintah maju lurus, roda kiri maju tetapi roda kanan mundur. Sensor garis TCRT5000 membaca tidak stabil.',fw:['sig','tcg'],
+  tp:[['bat','Tegangan baterai','7,4 V','7,4 V'],['outL','Output motor kiri saat maju','+7,1 V (arah maju)','+7,1 V'],['outR','Output motor kanan saat maju','−7,1 V (arah mundur)','−7,1 V'],['sg','Sinyal IN3 dan IN4 saat maju','IN3 = LOW, IN4 = HIGH (kebalikan pasangan kiri)','L / H'],['tcg','Kontinuitas GND TCRT5000 ke GND ESP32','Tidak ada (putus)','OPEN'],['tcv','VCC sensor TCRT5000','3,3 V','3,3 V']],
+  f:[['Arah motor kanan terbalik (IN3 dan IN4 tertukar)',1],['GND sensor garis tidak tersambung',1],['Baterai lemah',0],['L298N rusak total',0],['Sensor TCRT5000 rusak',0]],
+  x:[['Tukar kabel IN3 dan IN4',1],['Sambungkan kembali GND sensor ke GND ESP32',1],['Ganti L298N',0],['Turunkan PWM roda kiri',0],['Ganti sensor TCRT5000',0]]}),
+  hints:['Bandingkan polaritas output kiri dan kanan saat perintah maju sama.','Sinyal IN3 dan IN4 kebalikan dari pasangan kiri. Sensor berderau bisa karena ground.','Dua kesalahan: IN3 dan IN4 tertukar, serta GND sensor putus.']};
+ return{story:s+' Tiga kesalahan berlapis menunggu ditemukan.',steps:robotRusak({g:'Motor kiri bergerak tidak menentu, motor kanan tidak pernah berputar, dan jarak ultrasonik selalu terbaca 0 cm.',fw:['gnd','enb','trg','ech'],
+  tp:[['bat','Tegangan baterai','7,4 V','7,4 V'],['gnd','Kontinuitas GND ESP32 ke GND L298N','Tidak ada (tidak tersambung)','OPEN'],['sg','Sinyal IN1 terhadap GND L298N','Mengambang, berubah-ubah 0,4–2,1 V','0,4–2,1 V'],['en','Pin ENB L298N saat diberi PWM','0 V terus-menerus. Pin yang dipakai kode untuk ENB: GPIO 34','0,0 V'],['trig','Pulsa di kabel TRIG ujung sensor','Tidak ada pulsa 10 µs','0 pulsa'],['echo','Pulsa di kabel ECHO ujung sensor','Pulsa 10 µs terukur di sini (seharusnya di TRIG)','ADA'],['outL','Output motor kiri','Naik-turun tidak teratur','3–7 V']],
+  f:[['GND ESP32 dan GND L298N tidak tersambung bersama',1],['Kode memakai GPIO 34 (input saja) sebagai output ENB',1],['Kabel TRIG dan ECHO HC-SR04 tertukar',1],['Baterai lemah',0],['Motor kanan rusak',0],['Sensor HC-SR04 rusak',0]],
+  x:[['Sambungkan GND ESP32 ke GND L298N',1],['Pindahkan ENB ke pin output (misalnya GPIO 33) di kode',1],['Tukar kabel TRIG dan ECHO',1],['Ganti motor kanan',0],['Ganti baterai',0],['Ganti HC-SR04',0]]}),
+  hints:['Tiga gejala berbeda biasanya berarti tiga penyebab. Telusuri satu per satu.','Sinyal mengambang berarti tidak ada ground bersama. GPIO 34 tidak bisa menjadi output. Pulsa muncul di kabel yang salah.','Perbaiki: ground bersama, ENB ke pin output, tukar TRIG dan ECHO.']}};
+
+// ===== MISI 3: Sirkuit Sensor =====
+function wiring(){
+ var P=['— pilih —','3V3','VIN (5 V)','GND','GPIO 23','GPIO 25','GPIO 12 (pin boot)','GPIO 34 (input saja)','GPIO 35 (input saja)'],N=['VCC','TRIG','ECHO','GND'],ss=[],reads={},sy=function(i){return 35+i*45},ey=function(j){return 24+j*22};
+ var box=document.createElement('div'),lines='',i;
+ for(i=0;i<4;i++)lines+='<line class="wr" x1="90" y1="'+sy(i)+'" x2="230" y2="'+sy(i)+'" opacity="0"/><circle class="sd" cx="90" cy="'+sy(i)+'" r="3.5"/><text class="sl" x="14" y="'+(sy(i)+3)+'">'+N[i]+'</text>';
+ for(i=0;i<8;i++)lines+='<circle class="sd" cx="230" cy="'+ey(i)+'" r="3.5"/><text class="sl" x="238" y="'+(ey(i)+3)+'">'+P[i+1].replace(' (input saja)',' *').replace(' (pin boot)',' !')+'</text>';
+ box.innerHTML='<svg viewBox="0 0 330 215" role="img" aria-label="Skema sambungan HC-SR04 ke ESP32"><rect class="sb" x="10" y="8" width="80" height="199"/><text class="sl" x="30" y="22">HC-SR04</text><rect class="sb" x="230" y="8" width="90" height="199"/><text class="sl" x="262" y="22" text-anchor="middle" dx="0"></text>'+lines+'<text class="sl" x="140" y="208">* input saja   ! pin boot</text></svg>';
+ var ln=box.querySelectorAll('line'),dv=sel([['0','Echo langsung ke pin'],['1','Echo lewat pembagi tegangan (1 kΩ + 2 kΩ)']],'0'),
+ out=h('div',{class:'rd'},'Serial Monitor siap.'),
+ sels=N.map(function(n,k){var s=sel(P.map(function(p,j){return[j,p]}),0);s.addEventListener('change',draw);ss.push(s);return h('div',{},h('label',{},n+' →'),s)});
+ dv.addEventListener('change',draw);
+ function draw(){ss.forEach(function(s,k){var j=+s.value;ln[k].setAttribute('opacity',j?1:0);if(j)ln[k].setAttribute('y2',ey(j-1))})}
+ function problems(){var v=ss.map(function(s){return P[+s.value]}),e=[];
+  if(v.indexOf(P[0])>=0)return['Semua pin sensor harus disambungkan.'];
+  if(v[0]==='3V3')e.push('VCC ke 3V3: HC-SR04 standar dirancang untuk 5 V, pembacaan tidak andal.');else if(v[0]!=='VIN (5 V)')e.push('VCC harus ke catu 5 V (VIN).');
+  if(v[3]!=='GND')e.push('GND sensor harus ke GND ESP32.');
+  if(v[1]==='GPIO 34 (input saja)'||v[1]==='GPIO 35 (input saja)')e.push('TRIG ke pin input saja: GPIO 34 dan 35 tidak bisa mengirim pulsa.');
+  else if(v[1]==='GPIO 12 (pin boot)')e.push('GPIO 12 adalah pin boot, hindari untuk TRIG.');
+  else if(v[1].indexOf('GPIO')!==0)e.push('TRIG harus ke pin GPIO yang bisa menjadi output.');
+  if(v[2].indexOf('GPIO')!==0)e.push('ECHO harus ke pin GPIO.');else if(v[2]===v[1])e.push('TRIG dan ECHO tidak boleh memakai pin yang sama.');else if(v[2]==='GPIO 12 (pin boot)')e.push('GPIO 12 adalah pin boot, hindari untuk ECHO.');
+  if(dv.value==='0')e.push('ECHO mengeluarkan 5 V sedangkan ESP32 maksimal 3,3 V. Turunkan dengan pembagi tegangan.');
+  return e}
+ function read(cm){var p=problems();if(p.length){out.textContent+='\n> ERR: tidak ada respons sensor'+(dv.value==='0'?' (ESP32 berisiko rusak)':'');return}
+  reads[cm]=1;out.textContent+='\n> durasi='+Math.round(cm*2/0.0343)+' µs  Jarak: '+cm+' cm'}
+ var bt=[10,20,30].map(function(c){return h('button',{class:'chip',onclick:function(){read(c)}},'Benda '+c+' cm')});
+ return{el:h('div',{},box,h('div',{class:'g2'},sels),h('label',{},'Sambungan Echo'),dv,h('p',{class:'mut',style:'margin-top:10px'},'Setelah rangkaian benar, uji pembacaan:'),bt,out),
+  test:function(){var p=problems();if(p.length)return{ok:false,msg:p.join(' ')};return(reads[10]&&reads[20]&&reads[30])?{ok:true,msg:'Rangkaian benar dan jarak terbaca pada 10, 20, dan 30 cm.'}:{ok:false,msg:'Rangkaian benar. Sekarang baca jarak pada 10, 20, dan 30 cm di Serial Monitor.'}}}}
+
+function ldr(cfg){
+ var RL={t:2000,g:100000},got={},rf=sel([[220,'220 Ω'],[1000,'1 kΩ'],[4700,'4,7 kΩ'],[10000,'10 kΩ'],[47000,'47 kΩ'],[100000,'100 kΩ']],1000),
+ pin=cfg.pins?sel([['b','GPIO 4 (ADC2)'],['a','GPIO 32 (ADC1)'],['c','GPIO 2 (ADC2)'],['d','GPIO 34 (ADC1)']],'b'):null,
+ th=h('input',{type:'number',min:0,max:4095,placeholder:'0–4095'}),out=h('div',{class:'rd'},'Belum ada pengukuran.'),lp=h('span',{class:'lamp'}),
+ adc=function(k){var f=+rf.value;return Math.round(4095*f/(f+RL[k]))};
+ function show1(){var t=[];if(got.t)t.push('Terang: R LDR 2 kΩ → ADC '+adc('t'));if(got.g)t.push('Gelap: R LDR 100 kΩ → ADC '+adc('g'));
+  var a=+th.value;if(got.t&&got.g&&th.value!==''){t.push('Dengan ambang '+a+': terang → LED '+(adc('t')<a?'MENYALA':'mati')+', gelap → LED '+(adc('g')<a?'MENYALA':'mati'))}
+  out.textContent=t.join('\n')||'Belum ada pengukuran.'}
+ rf.addEventListener('change',function(){got={};show1()});th.addEventListener('input',show1);
+ var bs=[['t','Ukur terang'],['g','Ukur gelap']].map(function(x){return h('button',{class:'chip',onclick:function(){got[x[0]]=1;show1()}},x[1])});
+ return{el:h('div',{},h('p',{class:'mut'},'LDR di 3,3 V, resistor tetap ke GND, titik tengah ke pin ADC. Nilai ADC 12 bit (0–4095), makin tinggi makin terang.'),
+  pin?[h('label',{},'Pin LDR (WiFi robot aktif)'),pin]:null,h('label',{},'Resistor tetap'),rf,h('div',{style:'margin-top:10px'},bs),h('label',{},'Ambang (LED menyala bila ADC di bawah ambang)'),th,out),
+  test:function(){if(pin&&(pin.value==='b'||pin.value==='c'))return{ok:false,msg:'ADC2 tidak bisa dipakai saat WiFi aktif. Pindahkan LDR ke pin ADC1.'};
+   if(!got.t||!got.g)return{ok:false,msg:'Ukur nilai saat terang dan gelap dulu.'};
+   var a=adc('t'),b=adc('g'),d=a-b;if(d<cfg.minDiff)return{ok:false,msg:'Selisih terang–gelap hanya '+d+' (perlu minimal '+cfg.minDiff+'). Coba resistor tetap lain.'};
+   var x=+th.value;if(th.value===''||x<b+0.2*d||x>a-0.2*d)return{ok:false,msg:'Ambang harus di antara nilai gelap ('+b+') dan terang ('+a+') dengan jarak aman dari keduanya.'};
+   return{ok:true,msg:'Selisih terang–gelap '+d+', ambang '+x+' aman.'}}}}
+
+function tcrt(){
+ var o=[['if (sensor == HIGH) berhenti();',1],['if (sensor == LOW) berhenti();',0],['if (sensor > 2000) berhenti();',0],['if (sensor == HIGH) maju();',0]],ch=null,
+ out=h('div',{class:'rd'},'Pilih permukaan untuk melihat keluaran sensor.'),
+ bs=[['Putih','LOW'],['Hitam','HIGH']].map(function(x){return h('button',{class:'chip',onclick:function(){out.textContent='Permukaan '+x[0].toLowerCase()+' → keluaran digital '+x[1]}},x[0])});
+ o.sort(function(){return Math.random()-.5});
+ return{el:h('div',{},h('p',{class:'mut'},'Modul TCRT5000 ini menghasilkan keluaran digital. Robot harus berhenti saat sensor melihat garis hitam.'),bs,out,h('label',{},'Kondisi yang tepat:'),
+  o.map(function(x){var r=h('input',{type:'radio',name:'tc'});r.addEventListener('change',function(){ch=x[1]});return h('label',{class:'opt'},r,h('span',{class:'mono'},x[0]))})),
+  test:function(){return ch===null?{ok:false,msg:'Pilih salah satu kondisi.'}:ch?{ok:true,msg:'Tepat. Garis hitam memantulkan sedikit IR sehingga keluaran HIGH.'}:{ok:false,msg:'Belum tepat. Perhatikan keluaran sensor di permukaan putih dan hitam.'}}}}
+
+function divider(){
+ var r1=sel([[1000,'1 kΩ'],[2200,'2,2 kΩ'],[4700,'4,7 kΩ'],[10000,'10 kΩ']],1000),r2=sel([[1000,'1 kΩ'],[2000,'2 kΩ'],[3300,'3,3 kΩ'],[10000,'10 kΩ']],1000),v=h('input',{type:'number',step:'0.01',placeholder:'Volt'});
+ return{el:h('div',{},h('p',{class:'mut'},'Echo HC-SR04 keluar 5 V. Turunkan ke tegangan aman untuk pin ESP32 dengan dua resistor. Vout = 5 V × R2 ÷ (R1 + R2).'),
+  h('div',{class:'g2'},h('div',{},h('label',{},'R1 (atas)'),r1),h('div',{},h('label',{},'R2 (bawah)'),r2)),h('label',{},'Hasil hitunganmu (Vout, volt)'),v),
+  test:function(){var a=5*(+r2.value)/(+r1.value+ +r2.value),x=parseFloat(v.value);
+   if(isNaN(x))return{ok:false,msg:'Tulis hasil hitunganmu.'};if(Math.abs(x-a)>0.15)return{ok:false,msg:'Hitunganmu belum cocok dengan rumus. Hitung ulang.'};
+   if(a<2.6)return{ok:false,msg:'Vout '+a.toFixed(2)+' V terlalu rendah, ESP32 bisa tidak membaca HIGH.'};if(a>3.41)return{ok:false,msg:'Vout '+a.toFixed(2)+' V terlalu tinggi untuk pin ESP32.'};
+   return{ok:true,msg:'Vout '+a.toFixed(2)+' V aman untuk pin ESP32.'}}}}
+
+M[3]=function(k){var s='Pintu ketiga hanya menyala bila sensor terbaca dengan benar dan aman.';
+ if(k==='D'){var w=wiring();return{story:s+' Sambungkan sensor jarak HC-SR04 ke ESP32.',steps:[{t:'Sambungkan HC-SR04 dan baca jarak',el:w.el,test:w.test}],hints:['Echo mengeluarkan 5 V, sedangkan pin ESP32 bekerja pada 3,3 V.','HC-SR04 standar butuh catu 5 V (VIN). TRIG harus ke pin yang bisa output; GPIO 34 dan 35 hanya input.','Echo harus lewat pembagi tegangan dan masuk ke pin GPIO yang bisa membaca, misalnya GPIO 34.']}}
+ if(k==='L'){var l=ldr({minDiff:1500}),t=tcrt();return{story:s+' Kalibrasi sensor cahaya dan sensor garis.',steps:[{t:'Kalibrasi sensor cahaya LDR',el:l.el,test:l.test},{t:'Sensor garis TCRT5000',el:t.el,test:t.test}],hints:['Ukur LDR saat terang dan gelap, lalu bandingkan nilai ADC-nya.','Pilih resistor tetap agar selisih ADC terang dan gelap besar. Terlalu kecil atau terlalu besar membuat selisihnya sempit.','Letakkan ambang di tengah antara gelap dan terang. TCRT5000: LOW di putih, HIGH di hitam, jadi berhenti saat HIGH.']}}
+ var d=divider(),l2=ldr({minDiff:2500,pins:true});return{story:s+' Hitung dan pilih sendiri nilai komponennya.',steps:[{t:'Pembagi tegangan untuk Echo',el:d.el,test:d.test},{t:'Rangkaian LDR (R LDR terang 2 kΩ, gelap 100 kΩ)',el:l2.el,test:l2.test}],hints:['Vout = 5 V × R2 ÷ (R1 + R2). Targetnya sekitar 3,3 V.','Resistor tetap LDR yang baik berada di antara resistansi LDR terang dan gelap, mendekati akar hasil kalinya (sekitar 14 kΩ).','LDR harus ke pin ADC1 karena ADC2 tidak bisa dipakai bersama WiFi. Coba 10 kΩ lalu letakkan ambang di tengah.']}};
+
+initLive();
+function resume(){var a=S.active,v=VER.filter(function(q){return q.k===a.ver})[0],rem=a.end-Date.now();
+ if(!v||!D[a.id]||!M[a.id]){S.active=null;save();hub();return}
+ if(rem<=0){if(!S.res[a.id])S.res[a.id]={v:a.ver,pts:0,hints:0};S.active=null;save();push();
+  show(h('p',{class:'mono am'},'// WAKTU HABIS'),h('h1',{},D[a.id].n),h('div',{class:'panel'},h('p',{},'Waktu misi habis saat halaman tertutup. Kartu darurat membuka kodenya:'),h('h2',{class:'mono ok'},kd(a.id))),
+   h('button',{class:'btn',onclick:nextM},'Misi berikutnya'),h('button',{class:'btn sec',onclick:hub},'Pusat kendali'));return}
+ show(h('p',{class:'mono am'},'// MISI BERJALAN'),h('h1',{},D[a.id].n),h('div',{class:'panel'},h('p',{},'Misi ini masih berjalan. Level: '+v.n+'. Sisa waktu: '+mmss(rem)+'.'),h('p',{class:'mut'},'Langkah di level yang sedang dikerjakan mulai dari awal. Waktu tetap berjalan.')),
+  h('button',{class:'btn',onclick:function(){run(a.id,v,{end:a.end,lv:a.lv||[],tick:a.tick||{},tb:!!a.tb,kb:!!a.kb})}},'Lanjutkan'),h('button',{class:'btn sec',onclick:function(){S.active=null;save();hub()}},'Tinggalkan misi'))}
+function route(){var m=location.hash.match(/^#durasi-(\d{1,2})$/);if(m){S.dur=Math.max(5,Math.min(60,+m[1]));save()}
+ if(location.hash==='#papan')board();else if(S.tim&&S.mem.length)(S.active?resume():hub());else intro()}
+window.addEventListener('hashchange',route);route();
+</script>
+</body>
+</html>
